@@ -324,6 +324,8 @@ body[data-mode="night"] .prayer-row[data-active="true"] .prayer-time {
 
 @media (orientation: portrait) and (max-height: 760px) {
   .stage {
+    width: calc(100% - 0.35rem);
+    margin-left: -0.2rem;
     padding: 0.65rem 1.15rem;
     gap: 0.6rem;
   }
@@ -349,11 +351,14 @@ body[data-mode="night"] .prayer-row[data-active="true"] .prayer-time {
   }
   .prayer-list { gap: 0.1rem; }
   .prayer-row {
+    display: grid;
     grid-template-columns: minmax(0, 1fr) max-content;
     column-gap: 0.75rem;
-    padding: 0.36rem 1.55rem 0.36rem 0.7rem;
+    padding: 0.36rem 2.15rem 0.36rem 0.7rem;
     border-radius: 10px;
   }
+  .prayer-name { min-width: 0; }
+  .prayer-time { justify-self: end; }
   .prayer-name,
   .prayer-time {
     font-size: clamp(1.4rem, 5.55vw, 1.85rem);
