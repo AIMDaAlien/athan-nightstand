@@ -1,6 +1,6 @@
 # Athan Nightstand
 
-A single-page web app that turns an always-plugged-in Android phone (target: LG V30 on LineageOS 21, Android 14) into a bedside prayer-times clock. Giant countdown to the next prayer, the five daily prayer times plus Sunrise, Gregorian + Hijri dates, and the athan plays at each prayer.
+I wanted a single-page web app that turns an always-plugged-in Android phone (target: LG V30 on LineageOS 21, Android 14) into a bedside prayer-times clock. Giant countdown to the next prayer, the five daily prayer times plus Sunrise, Gregorian + Hijri dates, and the athan plays at each prayer. To be fair, Mawaqit could work but I wanted by own spin on the theming.
 
 Visual language: periwinkle glassmorphism on a near-black base, Ubuntu typeface, slow drifting gradients and soft cross-fades. A "night mode" collapses to true AMOLED-black between 23:00 and 05:00.
 
