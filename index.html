@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0b1e" />
+  <title>Athan</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-mode="day" data-layout="a">
+  <div class="aurora" aria-hidden="true"></div>
+
+  <main class="stage" id="stage">
+    <header class="dates">
+      <div class="date-gregorian" id="greg-date"></div>
+      <div class="date-hijri" id="hijri-date"></div>
+    </header>
+
+    <section class="glass countdown-panel" aria-live="polite">
+      <div class="next-label">
+        <span class="next-label-pre">Next</span>
+        <span class="next-label-name" id="next-name">—</span>
+      </div>
+      <div class="countdown" id="countdown">--:--:--</div>
+      <div class="next-at" id="next-at"></div>
+    </section>
+
+    <section class="glass prayer-list" id="prayer-list" aria-label="Prayer times">
+      <div class="prayer-row" data-prayer="fajr">
+        <span class="prayer-name">Fajr</span>
+        <span class="prayer-time" data-time="fajr">—</span>
+      </div>
+      <div class="prayer-row" data-prayer="sunrise">
+        <span class="prayer-name">Sunrise</span>
+        <span class="prayer-time" data-time="sunrise">—</span>
+      </div>
+      <div class="prayer-row" data-prayer="dhuhr">
+        <span class="prayer-name">Dhuhr</span>
+        <span class="prayer-time" data-time="dhuhr">—</span>
+      </div>
+      <div class="prayer-row" data-prayer="asr">
+        <span class="prayer-name">Asr</span>
+        <span class="prayer-time" data-time="asr">—</span>
+      </div>
+      <div class="prayer-row" data-prayer="maghrib">
+        <span class="prayer-name">Maghrib</span>
+        <span class="prayer-time" data-time="maghrib">—</span>
+      </div>
+      <div class="prayer-row" data-prayer="isha">
+        <span class="prayer-name">Isha</span>
+        <span class="prayer-time" data-time="isha">—</span>
+      </div>
+    </section>
+  </main>
+
+  <audio id="athan-fajr" preload="auto" src="audio/fajr.mp3"></audio>
+  <audio id="athan-standard" preload="auto" src="audio/standard.mp3"></audio>
+
+  <script src="lib/adhan.js"></script>
+  <script src="config.local.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,370 @@
+/* ========================================================================
+   Athan Nightstand — periwinkle glassmorphism, Ubuntu, soft motion
+   ====================================================================== */
+
+/* ---- Fonts ---- */
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 300;
+  font-display: block;
+  src: url('fonts/Ubuntu-Light.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url('fonts/Ubuntu-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url('fonts/Ubuntu-Medium.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url('fonts/Ubuntu-Bold.woff2') format('woff2');
+}
+
+/* ---- Palette ---- */
+:root {
+  --bg-deep:        #0b0b1e;
+  --bg-panel:       #1a1a3a;
+  --periwinkle-50:  #e9e9ff;
+  --periwinkle-200: #c7c7ff;
+  --periwinkle-400: #8b8ef0;
+  --periwinkle-600: #5b5fcc;
+  --text-hi:        #e9e9ff;
+  --text-lo:        #a5a5d9;
+  --text-mute:      #6f74b8;
+
+  --glass-bg:       rgba(139, 142, 240, 0.08);
+  --glass-border:   rgba(199, 199, 255, 0.18);
+  --glass-blur:     12px;
+  --glass-radius:   28px;
+
+  --ease:           cubic-bezier(.2, .8, .2, 1);
+  --dur-fast:       220ms;
+  --dur-med:        600ms;
+  --dur-slow:       1200ms;
+  --dur-mode:       30000ms;
+}
+
+body[data-mode="night"] {
+  --bg-deep:      #000000;
+  --bg-panel:     #05050f;
+  --text-hi:      #6b6ea8;
+  --text-lo:      #3a3d6b;
+  --text-mute:    #23264a;
+  --glass-bg:     rgba(139, 142, 240, 0.03);
+  --glass-border: rgba(199, 199, 255, 0.08);
+  --glass-blur:   6px;
+}
+
+/* ---- Reset & base ---- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg-deep);
+  color: var(--text-hi);
+  font-family: 'Ubuntu', system-ui, sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition:
+    background var(--dur-mode) var(--ease),
+    color      var(--dur-mode) var(--ease);
+}
+
+body {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: none; /* kiosk — hide any pointer */
+}
+
+/* ---- Aurora drifting background ---- */
+.aurora {
+  position: fixed;
+  inset: -10%; /* overscan so drift doesn't reveal edges */
+  z-index: -1;
+  background:
+    radial-gradient(42% 32% at 22% 28%, rgba(139,142,240,0.28), transparent 70%),
+    radial-gradient(38% 28% at 78% 68%, rgba(91,95,204,0.22),  transparent 72%),
+    radial-gradient(30% 24% at 50% 92%, rgba(199,199,255,0.10), transparent 75%),
+    var(--bg-deep);
+  animation: aurora-drift 180s ease-in-out infinite alternate;
+  transition: opacity var(--dur-mode) var(--ease);
+  will-change: transform;
+}
+body[data-mode="night"] .aurora { opacity: 0.25; }
+
+@keyframes aurora-drift {
+  0%   { transform: translate3d(-2%, -1%, 0) scale(1.05); }
+  50%  { transform: translate3d( 1%,  2%, 0) scale(1.08); }
+  100% { transform: translate3d( 2%,  1%, 0) scale(1.10); }
+}
+
+/* ---- Stage layout ---- */
+.stage {
+  min-height: 100vh;
+  min-height: 100svh;
+  width: 100%;
+  padding: clamp(1rem, 3vh, 2.5rem) clamp(1rem, 4vw, 3rem);
+  display: grid;
+  gap: clamp(1rem, 3vh, 2rem);
+  grid-template-rows: auto auto 1fr;
+  align-content: start;
+  transition: transform 900ms var(--ease); /* carries the 60s pixel-shift */
+}
+
+/* Layout variant B swaps countdown and list order */
+body[data-layout="b"] .stage {
+  grid-template-rows: auto 1fr auto;
+}
+body[data-layout="b"] .prayer-list  { order: 2; }
+body[data-layout="b"] .countdown-panel { order: 3; }
+
+/* ---- Dates ---- */
+.dates {
+  text-align: center;
+  padding-top: 0.5rem;
+}
+.date-gregorian {
+  font-weight: 400;
+  font-size: clamp(1rem, 2.6vw, 1.5rem);
+  color: var(--text-lo);
+  letter-spacing: 0.05em;
+}
+.date-hijri {
+  margin-top: 0.35rem;
+  font-weight: 300;
+  font-size: clamp(0.85rem, 2.2vw, 1.25rem);
+  color: var(--text-mute);
+  letter-spacing: 0.03em;
+}
+
+/* ---- Glass panel base ---- */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 8px 32px rgba(10, 10, 30, 0.45);
+  padding: clamp(1.25rem, 3.5vh, 2.5rem) clamp(1.25rem, 4vw, 2.5rem);
+  transition:
+    background   var(--dur-mode) var(--ease),
+    border-color var(--dur-mode) var(--ease),
+    backdrop-filter var(--dur-mode) var(--ease);
+}
+
+/* ---- Countdown panel ---- */
+.countdown-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.75rem;
+}
+
+.next-label {
+  font-size: clamp(0.85rem, 2.2vw, 1.15rem);
+  color: var(--text-lo);
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
+  font-weight: 400;
+}
+.next-label-pre { color: var(--text-mute); margin-right: 0.4em; }
+.next-label-name {
+  color: var(--periwinkle-400);
+  transition: color var(--dur-med) var(--ease);
+}
+
+.countdown {
+  font-weight: 500;
+  font-size: clamp(3.25rem, 16vw, 10rem);
+  line-height: 0.95;
+  letter-spacing: 0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-hi);
+  text-shadow:
+    0 0 30px rgba(139, 142, 240, 0.18),
+    0 0 80px rgba(139, 142, 240, 0.08);
+  transition:
+    color      var(--dur-mode) var(--ease),
+    text-shadow var(--dur-mode) var(--ease);
+}
+
+body[data-mode="night"] .countdown {
+  text-shadow: none;
+}
+
+.next-at {
+  font-size: clamp(0.85rem, 2.2vw, 1.1rem);
+  color: var(--text-mute);
+  font-weight: 300;
+  letter-spacing: 0.1em;
+}
+
+/* ---- Prayer list ---- */
+.prayer-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(0.35rem, 1.2vh, 0.75rem);
+}
+
+.prayer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: clamp(0.5rem, 1.4vh, 0.85rem) clamp(0.5rem, 2vw, 1rem);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  transition:
+    background var(--dur-med) var(--ease),
+    color      var(--dur-med) var(--ease),
+    transform  var(--dur-med) var(--ease);
+}
+
+.prayer-name {
+  font-size: clamp(1.1rem, 3vw, 1.75rem);
+  font-weight: 400;
+  color: var(--text-lo);
+  letter-spacing: 0.05em;
+  transition: color var(--dur-med) var(--ease);
+}
+
+.prayer-time {
+  font-size: clamp(1.1rem, 3vw, 1.75rem);
+  font-weight: 500;
+  color: var(--text-hi);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  transition: color var(--dur-med) var(--ease);
+}
+
+/* ---- Active prayer state ---- */
+.prayer-row[data-active="true"] {
+  background: linear-gradient(
+    90deg,
+    rgba(139, 142, 240, 0.14) 0%,
+    rgba(139, 142, 240, 0.04) 100%
+  );
+}
+.prayer-row[data-active="true"] .prayer-name,
+.prayer-row[data-active="true"] .prayer-time {
+  color: var(--periwinkle-200);
+}
+.prayer-row[data-active="true"] .prayer-time {
+  color: var(--periwinkle-400);
+  text-shadow: 0 0 24px rgba(139, 142, 240, 0.35);
+}
+body[data-mode="night"] .prayer-row[data-active="true"] .prayer-time {
+  text-shadow: none;
+}
+
+/* Glow sweep on newly active row */
+.prayer-row[data-active="true"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    transparent 30%,
+    rgba(199, 199, 255, 0.18) 50%,
+    transparent 70%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: glow-sweep var(--dur-slow) var(--ease) 1;
+  pointer-events: none;
+}
+@keyframes glow-sweep {
+  to { transform: translateX(100%); }
+}
+
+/* Past prayers — dim */
+.prayer-row[data-past="true"] .prayer-name,
+.prayer-row[data-past="true"] .prayer-time {
+  color: var(--text-mute);
+}
+
+/* ---- Accessibility ---- */
+@media (prefers-reduced-motion: reduce) {
+  .aurora { animation: none; }
+  .prayer-row[data-active="true"]::before { animation: none; }
+  .stage { transition: none; }
+  * { transition-duration: 0.001ms !important; }
+}
+
+/* Portrait (nightstand default) */
+@media (orientation: portrait) {
+  .countdown { font-size: clamp(3.25rem, 18vw, 9rem); }
+}
+
+@media (orientation: portrait) and (max-height: 760px) {
+  .stage {
+    padding: 0.75rem 1rem;
+    gap: 0.75rem;
+  }
+  .dates { padding-top: 0.25rem; }
+  .date-gregorian { font-size: clamp(0.95rem, 4.4vw, 1.2rem); }
+  .date-hijri {
+    margin-top: 0.25rem;
+    font-size: clamp(0.8rem, 3.8vw, 1rem);
+  }
+  .glass {
+    border-radius: 22px;
+    padding: 0.9rem 1rem;
+  }
+  .countdown-panel { gap: 0.45rem; }
+  .countdown { font-size: clamp(3rem, 16vw, 5rem); }
+  .next-label {
+    font-size: 0.8rem;
+    letter-spacing: 0.28em;
+  }
+  .next-at {
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+  }
+  .prayer-list { gap: 0.2rem; }
+  .prayer-row {
+    padding: 0.42rem 0.55rem;
+    border-radius: 10px;
+  }
+  .prayer-name,
+  .prayer-time {
+    font-size: clamp(1rem, 4.2vw, 1.35rem);
+  }
+}
+
+/* Landscape fallback */
+@media (orientation: landscape) {
+  .stage {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    gap: clamp(1rem, 2vw, 2rem) clamp(1.5rem, 3vw, 3rem);
+  }
+  .dates { grid-column: 1 / -1; }
+  .countdown-panel { align-self: stretch; }
+  .prayer-list { align-self: stretch; }
+  body[data-layout="b"] .countdown-panel { order: 2; }
+  body[data-layout="b"] .prayer-list { order: 3; }
+}

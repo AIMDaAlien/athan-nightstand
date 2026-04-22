@@ -1,0 +1,14 @@
+.DS_Store
+Thumbs.db
+
+# Local athan recordings may have separate copyright/licensing terms.
+audio/*.mp3
+!audio/.gitkeep
+
+# Private local settings, including exact coordinates.
+config.local.js
+
+# Local verification artifacts
+*.log
+*.tmp
+screenshots/
