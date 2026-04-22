@@ -59,6 +59,35 @@ Recommended free/open-source option: **Webview Kiosk** from F-Droid.
 5. Set Android media volume, disable Do Not Disturb if needed, and lock
    orientation to portrait.
 
+If WebView Kiosk shows `net::ERR_ACCESS_DENIED` for the `file:///sdcard/...`
+URL, use the localhost method below instead.
+
+### 3b. Localhost fallback
+
+Some Android WebView builds block direct `file:///sdcard/...` pages. The free
+workaround is to run a tiny local web server on the phone with Termux.
+
+1. Install **Termux** from F-Droid.
+2. Open Termux and run:
+   ```bash
+   pkg update
+   pkg install python
+   termux-setup-storage
+   ```
+3. Allow the storage permission popup.
+4. Start the local server:
+   ```bash
+   cd /sdcard/athan
+   python -m http.server 8080
+   ```
+5. In Webview Kiosk, use this start URL instead:
+   ```text
+   http://127.0.0.1:8080/index.html
+   ```
+
+Keep Termux running in the background. For a permanent nightstand setup, disable
+battery optimization for Termux so Android does not kill the local server.
+
 ### 4. First tap
 Tap the screen once after setup. This primes the audio element in case your
 browser/WebView still requires a user gesture before audio playback.
