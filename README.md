@@ -9,7 +9,7 @@ Visual language: periwinkle glassmorphism on a near-black base, Ubuntu typeface,
 - [`adhan`](https://github.com/batoulapps/adhan-js) 4.4.3 (vendored browser bundle at `lib/adhan.js`) for prayer time calculation
 - `Intl.DateTimeFormat` with `islamic-umalqura` calendar for the Hijri date
 - Ubuntu font (latin subset, woff2) vendored in `fonts/`
-- Launched via **Fully Kiosk Browser** on the phone
+- Intended to run in a fullscreen Android WebView/kiosk shell
 
 ## First-time setup on your laptop
 
@@ -44,17 +44,41 @@ coordinates and possibly copyrighted recordings out of public commits.
 adb push . /sdcard/athan/
 ```
 
-### 3. Fully Kiosk Browser
-1. Install from `fully-kiosk.com` (sideload or Play Store).
-2. Buy the Plus license (~€7 one-time) — unlocks autoplay, motion sensing, remote admin.
-3. **Start URL**: `file:///sdcard/athan/index.html`
-4. Enable: Fullscreen · Keep Screen On · Disable Status Bar · Launch on Boot · **Autoplay Videos** (this is what lets the athan sound fire) · Screensaver Off.
-5. **Advanced Web Settings → Set as Launcher**.
-6. **Device Management → Screen Brightness**: ~25% (burn-in friendly).
-7. Lock orientation to portrait.
+### 3. Free kiosk shell
+Recommended free/open-source option: **Webview Kiosk** from F-Droid.
+
+1. Install Webview Kiosk from F-Droid.
+2. Set the start URL to:
+   ```text
+   file:///sdcard/athan/index.html
+   ```
+3. Enable fullscreen/immersive mode, keep screen on, launch on boot, and use as
+   the default launcher if you want a locked-down bedside device.
+4. In Web Engine settings, disable **Media playback requires user gesture**.
+   That setting is what allows the athan audio to play unattended.
+5. Set Android media volume, disable Do Not Disturb if needed, and lock
+   orientation to portrait.
 
 ### 4. First tap
-Tap the screen once after setup. This primes the audio element in case Fully Kiosk's autoplay isn't yet taking effect — the code handles this on the first `pointerdown`.
+Tap the screen once after setup. This primes the audio element in case your
+browser/WebView still requires a user gesture before audio playback.
+
+## Browser/autoplay notes
+
+Plain Chrome or most normal mobile browsers are not ideal for unattended athan
+audio. Modern browsers generally block audible autoplay until the user interacts
+with the page. The app includes a first-tap audio unlock, but that only helps the
+current browser session.
+
+For reliable unattended playback after reboot, use one of these:
+
+- A free/open-source WebView kiosk shell that exposes Android WebView's
+  `mediaPlaybackRequiresUserGesture` setting, such as Webview Kiosk.
+- A small native Android wrapper app that loads this folder in WebView and sets
+  media playback to not require a user gesture.
+
+Fully Kiosk Browser can also do this, but it is not required and is intentionally
+not the recommended setup for this project.
 
 ## Burn-in protection (built in)
 - Near-black base `#0b0b1e`, pure `#000` in night mode.
@@ -94,7 +118,10 @@ audio/              // drop fajr.mp3 and standard.mp3 here
 
 **Glass blur is janky on the V30** — Snapdragon 835 struggles with `backdrop-filter` under some drivers. Drop `--glass-blur` from `12px` → `8px` in `style.css`. If still janky, remove `backdrop-filter` entirely and set `--glass-bg: rgba(26, 26, 58, 0.55)` (opaque fallback).
 
-**Athan doesn't play** — confirm Fully Kiosk's "Autoplay Videos" is on, then tap the screen once. Check the audio files are at the exact paths `audio/fajr.mp3` and `audio/standard.mp3`.
+**Athan doesn't play** — check the audio files are at the exact paths
+`audio/fajr.mp3` and `audio/standard.mp3`, confirm Android media volume is up,
+and disable **Media playback requires user gesture** in your WebView/kiosk app.
+If using a normal browser, tap the screen once after launch.
 
 **Configuration required is showing** — copy `config.example.js` to
 `config.local.js`, then set numeric `lat` and `lng` values.
