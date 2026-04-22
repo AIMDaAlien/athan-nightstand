@@ -163,6 +163,11 @@ http://127.0.0.1:8080/index.html?testAudio=standard
 **Configuration required is showing** — copy `config.example.js` to
 `config.local.js`, then set numeric `lat` and `lng` values.
 
+**White bars show at the top or bottom** — this is Android/Webview Kiosk system
+UI, not the web page. In Webview Kiosk, set **Appearance → Address Bar Mode** to
+`Hidden`, **Appearance → Immersive Mode** to `Always On`, and **Appearance →
+Window Insets** to `None`.
+
 **Hijri date is off by a day** — set `hijriAdjustmentDays` in `config.local.js`
 to `1` or `-1` to align with your local mosque's convention.
 

@@ -76,6 +76,19 @@ Lower `--glass-blur` in `style.css`, for example:
 
 If still rough, remove `backdrop-filter` and use a more opaque panel.
 
+## White Bars At Top Or Bottom
+
+Meaning:
+
+Android or Webview Kiosk is showing system UI around the page. CSS cannot fully
+control this from inside the web app.
+
+Fix in Webview Kiosk:
+
+- `Appearance -> Address Bar Mode -> Hidden`
+- `Appearance -> Immersive Mode -> Always On`
+- `Appearance -> Window Insets -> None`
+
 ## Countdown Or Times Look Wrong
 
 Check:
