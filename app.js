@@ -43,6 +43,15 @@ const CONFIG = {
   ...(window.ATHAN_CONFIG || {}),
 };
 
+const VALID_TIME_FORMATS = ['12h', '24h'];
+const VALID_HIJRI_VARIANTS = ['islamic-umalqura', 'islamic-civil', 'islamic'];
+const effectiveTimeFormat = VALID_TIME_FORMATS.includes(CONFIG.timeFormat)
+  ? CONFIG.timeFormat
+  : DEFAULT_CONFIG.timeFormat;
+const effectiveHijriVariant = VALID_HIJRI_VARIANTS.includes(CONFIG.hijriVariant)
+  ? CONFIG.hijriVariant
+  : DEFAULT_CONFIG.hijriVariant;
+
 function getConfigError() {
   if (!Number.isFinite(CONFIG.lat) || !Number.isFinite(CONFIG.lng)) {
     return 'Set decimal lat/lng in config.local.js';
@@ -52,6 +61,12 @@ function getConfigError() {
   }
   if (!Madhab[CONFIG.madhab]) {
     return `Unknown madhab: ${CONFIG.madhab}`;
+  }
+  if (!VALID_TIME_FORMATS.includes(CONFIG.timeFormat)) {
+    return `Unknown time format: ${CONFIG.timeFormat}`;
+  }
+  if (!VALID_HIJRI_VARIANTS.includes(CONFIG.hijriVariant)) {
+    return `Unknown Hijri variant: ${CONFIG.hijriVariant}`;
   }
   return null;
 }
@@ -81,25 +96,45 @@ const HIJRI_MONTH_NAMES = [
   'Dhu al-Hijjah',
 ];
 
+const prayerTimesCache = new Map();
+
 function computeFor(date) {
   if (configError) return null;
   return new PrayerTimes(coords, date, params);
 }
 
-function todayTimes() {
-  return computeFor(new Date());
+function prayerTimesFor(date) {
+  const key = localDateKey(date);
+  if (!prayerTimesCache.has(key)) {
+    prayerTimesCache.set(key, computeFor(date));
+    if (prayerTimesCache.size > 4) {
+      prayerTimesCache.delete(prayerTimesCache.keys().next().value);
+    }
+  }
+  return prayerTimesCache.get(key);
 }
 
-function tomorrowTimes() {
-  const d = new Date();
+function todayTimes(now = new Date()) {
+  return prayerTimesFor(now);
+}
+
+function tomorrowTimes(now = new Date()) {
+  const d = new Date(now);
   d.setDate(d.getDate() + 1);
-  return computeFor(d);
+  return prayerTimesFor(d);
+}
+
+function localDateKey(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 // Given current Date, return { name, time, isTomorrow } for the next scheduled prayer (fajr..isha).
 // Sunrise is shown in the list but is NOT used as the "next prayer" target.
 function nextUpcoming(now = new Date()) {
-  const t = todayTimes();
+  const t = todayTimes(now);
   const candidates = ATHAN_KEYS.map(k => ({ name: k, time: t[k] }));
   for (const c of candidates) {
     if (c.time.getTime() > now.getTime()) {
@@ -107,14 +142,14 @@ function nextUpcoming(now = new Date()) {
     }
   }
   // All today's prayers past — next is tomorrow's Fajr
-  const tt = tomorrowTimes();
+  const tt = tomorrowTimes(now);
   return { name: 'fajr', time: tt.fajr, isTomorrow: true };
 }
 
 // Highlight the most recent athan time that has passed today.
 // Before today's Fajr, no row is highlighted because the visible Isha row is for tonight.
 function currentPeriod(now = new Date()) {
-  const t = todayTimes();
+  const t = todayTimes(now);
   let active = null;
   for (const key of ATHAN_KEYS) {
     if (t[key].getTime() <= now.getTime()) active = key;
@@ -125,20 +160,28 @@ function currentPeriod(now = new Date()) {
 /* ============================================================
    Formatters
    ============================================================ */
+const TIME_FORMATTER = new Intl.DateTimeFormat(undefined, effectiveTimeFormat === '24h'
+  ? { hour: '2-digit', minute: '2-digit', hour12: false }
+  : { hour: 'numeric', minute: '2-digit', hour12: true });
+
+const GREGORIAN_FORMATTER = new Intl.DateTimeFormat('en-US', {
+  weekday: 'long',
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+});
+
+const HIJRI_FORMATTER = new Intl.DateTimeFormat(
+  `en-u-ca-${effectiveHijriVariant}-nu-latn`,
+  { day: 'numeric', month: 'numeric', year: 'numeric' },
+);
+
 function fmtTimeOfDay(date) {
-  const opts = CONFIG.timeFormat === '24h'
-    ? { hour: '2-digit', minute: '2-digit', hour12: false }
-    : { hour: 'numeric', minute: '2-digit', hour12: true };
-  return new Intl.DateTimeFormat(undefined, opts).format(date);
+  return TIME_FORMATTER.format(date);
 }
 
 function fmtGregorian(date) {
-  return new Intl.DateTimeFormat('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(date);
+  return GREGORIAN_FORMATTER.format(date);
 }
 
 function fmtHijri(date) {
@@ -149,10 +192,7 @@ function fmtHijri(date) {
 
   // Android WebView can report Islamic day/year with a Gregorian long month
   // name. Use numeric Islamic month parts and map the month name ourselves.
-  const loc = `en-u-ca-${CONFIG.hijriVariant}-nu-latn`;
-  const parts = new Intl.DateTimeFormat(loc, {
-    day: 'numeric', month: 'numeric', year: 'numeric',
-  }).formatToParts(adjusted);
+  const parts = HIJRI_FORMATTER.formatToParts(adjusted);
   const pickNumber = t => parseLocaleNumber(parts.find(p => p.type === t)?.value);
   const day = pickNumber('day');
   const month = pickNumber('month');
@@ -207,8 +247,10 @@ const el = {
 /* ============================================================
    Rendering
    ============================================================ */
+let renderedDateKey = null;
+
 function renderPrayerList(now = new Date()) {
-  const t = todayTimes();
+  const t = todayTimes(now);
   const activeKey = currentPeriod(now);
   const nowMs = now.getTime();
 
@@ -216,8 +258,9 @@ function renderPrayerList(now = new Date()) {
     const key = row.dataset.prayer;
     const time = t[key];
     const timeEl = row.querySelector('.prayer-time');
-    if (timeEl.textContent !== fmtTimeOfDay(time)) {
-      timeEl.textContent = fmtTimeOfDay(time);
+    const formattedTime = fmtTimeOfDay(time);
+    if (timeEl.textContent !== formattedTime) {
+      timeEl.textContent = formattedTime;
     }
     const isActive = key === activeKey;
     const isPast = time.getTime() <= nowMs && !isActive;
@@ -227,6 +270,10 @@ function renderPrayerList(now = new Date()) {
 }
 
 function renderDates(now = new Date()) {
+  const dateKey = localDateKey(now);
+  if (dateKey === renderedDateKey) return;
+  renderedDateKey = dateKey;
+
   const g = fmtGregorian(now);
   if (el.greg.textContent !== g) el.greg.textContent = g;
   const h = fmtHijri(now);

@@ -10,6 +10,7 @@ The app is intentionally plain:
 - No bundler.
 - No package manager.
 - No server required for normal desktop preview.
+- Intended runtime is a fullscreen Android kiosk browser or WebView shell.
 
 This keeps deployment simple for an old Android phone and avoids runtime network
 dependencies.
@@ -69,4 +70,3 @@ The CSS uses a dark, low-brightness interface:
 
 This does not eliminate burn-in risk, but it reduces static high-brightness
 regions.
-

@@ -1,7 +1,8 @@
 # Third-Party Notices
 
-This project vendors a few small third-party assets so it can run offline from
-Fully Kiosk Browser without a build step or network connection.
+This project vendors a few small third-party assets so it can run offline in a
+fullscreen kiosk browser or Android WebView shell without a build step or
+network connection.
 
 ## adhan-js
 

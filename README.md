@@ -1,6 +1,6 @@
 # Athan Nightstand
 
-I wanted a single-page web app that turns an always-plugged-in Android phone (target: LG V30 on LineageOS 21, Android 14) into a bedside prayer-times clock. Giant countdown to the next prayer, the five daily prayer times plus Sunrise, Gregorian + Hijri dates, and the athan plays at each prayer. To be fair, Mawaqit could work but I wanted by own spin on the theming.
+I wanted a single-page web app that turns an always-plugged-in Android phone (target: LG V30 on LineageOS 21, Android 14) into a bedside prayer-times clock. It is designed to run full-screen in a kiosk browser/WebView shell. Giant countdown to the next prayer, the five daily prayer times plus Sunrise, Gregorian + Hijri dates, and the athan plays at each prayer. To be fair, Mawaqit could work but I wanted by own spin on the theming.
 
 Visual language: periwinkle glassmorphism on a near-black base, Ubuntu typeface, slow drifting gradients and soft cross-fades. A "night mode" collapses to true AMOLED-black between 23:00 and 05:00.
 
@@ -9,7 +9,7 @@ Visual language: periwinkle glassmorphism on a near-black base, Ubuntu typeface,
 - [`adhan`](https://github.com/batoulapps/adhan-js) 4.4.3 (vendored browser bundle at `lib/adhan.js`) for prayer time calculation
 - `Intl.DateTimeFormat` with `islamic-umalqura` calendar for the Hijri date
 - Ubuntu font (latin subset, woff2) vendored in `fonts/`
-- Intended to run in a fullscreen Android WebView/kiosk shell
+- Intended to run in a fullscreen Android kiosk browser or WebView shell
 
 ## First-time setup on your laptop
 
@@ -44,7 +44,7 @@ coordinates and possibly copyrighted recordings out of public commits.
 adb push . /sdcard/athan/
 ```
 
-### 3. Free kiosk shell
+### 3. Free kiosk browser
 Recommended free/open-source option: **Webview Kiosk** from F-Droid.
 
 1. Install Webview Kiosk from F-Droid.
@@ -94,10 +94,10 @@ browser/WebView still requires a user gesture before audio playback.
 
 ## Browser/autoplay notes
 
-Plain Chrome or most normal mobile browsers are not ideal for unattended athan
-audio. Modern browsers generally block audible autoplay until the user interacts
-with the page. The app includes a first-tap audio unlock, but that only helps the
-current browser session.
+This project is meant to run inside a kiosk browser, not plain Chrome. Normal
+mobile browsers are not ideal for unattended athan audio because they generally
+block audible autoplay until the user interacts with the page. The app includes
+a first-tap audio unlock, but that only helps the current browser session.
 
 For reliable unattended playback after reboot, use one of these:
 
