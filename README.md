@@ -152,6 +152,14 @@ audio/              // drop fajr.mp3 and standard.mp3 here
 and disable **Media playback requires user gesture** in your WebView/kiosk app.
 If using a normal browser, tap the screen once after launch.
 
+To test audio immediately, open one of these URLs and tap once if playback does
+not start:
+
+```text
+http://127.0.0.1:8080/index.html?testAudio=fajr
+http://127.0.0.1:8080/index.html?testAudio=standard
+```
+
 **Configuration required is showing** — copy `config.example.js` to
 `config.local.js`, then set numeric `lat` and `lng` values.
 

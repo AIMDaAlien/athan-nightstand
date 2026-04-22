@@ -66,6 +66,20 @@ const params = configError ? null : CalculationMethod[CONFIG.method]();
 if (params) params.madhab = Madhab[CONFIG.madhab];
 
 const ATHAN_KEYS  = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']; // no athan at sunrise
+const HIJRI_MONTH_NAMES = [
+  'Muharram',
+  'Safar',
+  'Rabi al-Awwal',
+  'Rabi al-Thani',
+  'Jumada al-Awwal',
+  'Jumada al-Thani',
+  'Rajab',
+  'Shaban',
+  'Ramadan',
+  'Shawwal',
+  'Dhu al-Qadah',
+  'Dhu al-Hijjah',
+];
 
 function computeFor(date) {
   if (configError) return null;
@@ -132,14 +146,30 @@ function fmtHijri(date) {
   if (CONFIG.hijriAdjustmentDays) {
     adjusted.setDate(adjusted.getDate() + CONFIG.hijriAdjustmentDays);
   }
-  const loc = `en-u-ca-${CONFIG.hijriVariant}`;
-  // Assemble "D Month YYYY AH" explicitly via formatToParts so we control ordering
-  // and avoid the era being duplicated by the default locale format.
+
+  // Android WebView can report Islamic day/year with a Gregorian long month
+  // name. Use numeric Islamic month parts and map the month name ourselves.
+  const loc = `en-u-ca-${CONFIG.hijriVariant}-nu-latn`;
   const parts = new Intl.DateTimeFormat(loc, {
-    day: 'numeric', month: 'long', year: 'numeric',
+    day: 'numeric', month: 'numeric', year: 'numeric',
   }).formatToParts(adjusted);
-  const pick = t => parts.find(p => p.type === t)?.value ?? '';
-  return `${pick('day')} ${pick('month')} ${pick('year')} AH`;
+  const pickNumber = t => parseLocaleNumber(parts.find(p => p.type === t)?.value);
+  const day = pickNumber('day');
+  const month = pickNumber('month');
+  const year = pickNumber('year');
+  const monthName = HIJRI_MONTH_NAMES[month - 1] || 'Hijri month';
+  if (!Number.isFinite(day) || !Number.isFinite(year)) {
+    return 'Hijri date unavailable';
+  }
+  return `${day} ${monthName} ${year} AH`;
+}
+
+function parseLocaleNumber(value) {
+  const normalized = String(value ?? '').replace(/[٠-٩۰-۹]/g, d => {
+    const code = d.charCodeAt(0);
+    return String(code >= 0x06F0 ? code - 0x06F0 : code - 0x0660);
+  });
+  return Number.parseInt(normalized.replace(/[^\d]/g, ''), 10);
 }
 
 function fmtCountdown(ms) {
@@ -251,6 +281,17 @@ function playAthan(key) {
   }
 }
 
+function setupAudioTest() {
+  const requested = new URLSearchParams(window.location.search).get('testAudio');
+  if (requested !== 'fajr' && requested !== 'standard') return;
+
+  const key = requested === 'fajr' ? 'fajr' : 'dhuhr';
+  setTimeout(() => playAthan(key), 1000);
+  window.addEventListener('pointerdown', () => {
+    setTimeout(() => playAthan(key), 350);
+  }, { once: true });
+}
+
 /* ============================================================
    Burn-in mitigation: 60s pixel shift + 6h layout swap
    ============================================================ */
@@ -330,6 +371,7 @@ function boot() {
     window.removeEventListener('pointerdown', unlock);
   };
   window.addEventListener('pointerdown', unlock, { once: true });
+  setupAudioTest();
 }
 
 function renderConfigError(message) {

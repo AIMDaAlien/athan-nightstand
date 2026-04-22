@@ -53,6 +53,13 @@ Check:
 - Webview Kiosk has `Media playback requires user gesture` disabled.
 - Tap the screen once after launch to prime audio.
 
+Immediate test URLs:
+
+```text
+http://127.0.0.1:8080/index.html?testAudio=fajr
+http://127.0.0.1:8080/index.html?testAudio=standard
+```
+
 ## App Looks Too Slow Or Janky
 
 Likely cause:
@@ -79,4 +86,3 @@ Check:
 - `method` matches the local mosque convention.
 - `madhab` matches the desired Asr timing.
 - `hijriAdjustmentDays` is set if the local Hijri date differs.
-

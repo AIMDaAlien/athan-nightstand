@@ -2,9 +2,6 @@
 
 ## Near-Term
 
-- Add query-string audio test mode:
-  - `?testAudio=fajr`
-  - `?testAudio=standard`
 - Add a simple on-screen setup checklist for missing config/audio.
 - Add a screenshot to the README after V30 layout is confirmed.
 - Test Webview Kiosk file mode vs localhost mode on the actual V30.
@@ -28,4 +25,3 @@
   settings changes, or is localhost required?
 - Does unattended audio work reliably after reboot with Webview Kiosk?
 - Should the project eventually ship a native Android wrapper to avoid Termux?
-
