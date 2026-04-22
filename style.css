@@ -319,22 +319,26 @@ body[data-mode="night"] .prayer-row[data-active="true"] .prayer-time {
 
 /* Portrait (nightstand default) */
 @media (orientation: portrait) {
-  .countdown { font-size: clamp(3.55rem, 19.5vw, 9.75rem); }
+  .stage {
+    padding-left: clamp(0.35rem, 1.5vw, 1rem);
+    padding-right: clamp(2rem, 7vw, 5rem);
+  }
+  .countdown { font-size: clamp(3.55rem, 18.5vw, 9.4rem); }
 }
 
 @media (orientation: portrait) and (min-width: 900px) {
   .stage {
-    width: calc(100% - 7rem);
-    margin-left: -1rem;
+    width: calc(100% - 9rem);
+    margin-left: -1.85rem;
     margin-right: auto;
-    padding: 2rem 2.25rem;
+    padding: 2rem 1.65rem 2rem 1.05rem;
     gap: 1.6rem;
   }
   .glass {
-    padding: 1.7rem 2rem;
+    padding: 1.7rem 1.55rem;
   }
   .countdown {
-    font-size: clamp(7rem, 9.8vw, 8.8rem);
+    font-size: clamp(6.7rem, 9.3vw, 8.4rem);
   }
   .next-at {
     font-size: clamp(3rem, 4.3vw, 3.6rem);
@@ -350,9 +354,9 @@ body[data-mode="night"] .prayer-row[data-active="true"] .prayer-time {
 
 @media (orientation: portrait) and (max-height: 760px) {
   .stage {
-    width: calc(100% - 3.75rem);
-    margin-left: -0.6rem;
-    padding: 0.65rem 0.9rem;
+    width: calc(100% - 4.7rem);
+    margin-left: -0.95rem;
+    padding: 0.65rem 0.72rem 0.65rem 0.38rem;
     gap: 0.6rem;
   }
   .dates { padding-top: 0.25rem; }
