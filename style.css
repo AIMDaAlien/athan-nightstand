@@ -322,11 +322,37 @@ body[data-mode="night"] .prayer-row[data-active="true"] .prayer-time {
   .countdown { font-size: clamp(3.55rem, 19.5vw, 9.75rem); }
 }
 
+@media (orientation: portrait) and (min-width: 900px) {
+  .stage {
+    width: calc(100% - 7rem);
+    margin-left: -1rem;
+    margin-right: auto;
+    padding: 2rem 2.25rem;
+    gap: 1.6rem;
+  }
+  .glass {
+    padding: 1.7rem 2rem;
+  }
+  .countdown {
+    font-size: clamp(7rem, 9.8vw, 8.8rem);
+  }
+  .next-at {
+    font-size: clamp(3rem, 4.3vw, 3.6rem);
+  }
+  .prayer-row {
+    grid-template-columns: minmax(19rem, 40%) max-content;
+    justify-content: center;
+    column-gap: clamp(3rem, 5vw, 4.5rem);
+    padding-left: 1.8rem;
+    padding-right: 1.8rem;
+  }
+}
+
 @media (orientation: portrait) and (max-height: 760px) {
   .stage {
-    width: calc(100% - 1.6rem);
-    margin-left: -0.45rem;
-    padding: 0.65rem 1.25rem;
+    width: calc(100% - 3.75rem);
+    margin-left: -0.6rem;
+    padding: 0.65rem 0.9rem;
     gap: 0.6rem;
   }
   .dates { padding-top: 0.25rem; }
@@ -337,32 +363,32 @@ body[data-mode="night"] .prayer-row[data-active="true"] .prayer-time {
   }
   .glass {
     border-radius: 22px;
-    padding: 0.8rem 1.05rem;
+    padding: 0.8rem 0.85rem;
   }
   .countdown-panel { gap: 0.55rem; }
-  .countdown { font-size: clamp(3.3rem, 18vw, 5.4rem); }
+  .countdown { font-size: clamp(3rem, 16.4vw, 5rem); }
   .next-label {
     font-size: 0.8rem;
     letter-spacing: 0.28em;
   }
   .next-at {
-    font-size: clamp(1.55rem, 7vw, 2.35rem);
+    font-size: clamp(1.45rem, 6.5vw, 2.2rem);
     letter-spacing: 0.03em;
   }
   .prayer-list { gap: 0.1rem; }
   .prayer-row {
     display: grid;
-    grid-template-columns: minmax(7.2rem, 42%) max-content;
+    grid-template-columns: minmax(6.8rem, 40%) max-content;
     justify-content: center;
-    column-gap: clamp(1.35rem, 5.5vw, 2.1rem);
-    padding: 0.36rem 0.8rem;
+    column-gap: clamp(1rem, 4.5vw, 1.75rem);
+    padding: 0.36rem 0.55rem;
     border-radius: 10px;
   }
   .prayer-name { min-width: 0; }
   .prayer-time { justify-self: end; }
   .prayer-name,
   .prayer-time {
-    font-size: clamp(1.4rem, 5.55vw, 1.85rem);
+    font-size: clamp(1.3rem, 5.1vw, 1.75rem);
     line-height: 1.08;
   }
 }
