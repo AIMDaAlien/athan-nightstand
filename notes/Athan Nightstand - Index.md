@@ -20,8 +20,12 @@ Core behavior:
 - Public repo is configurable and does not include private coordinates.
 - Local private settings live in `config.local.js`, which is ignored by Git.
 - Local audio files live in `audio/fajr.mp3` and `audio/standard.mp3`, also ignored by Git.
+- Intended runtime is a fullscreen Android kiosk browser or WebView shell.
 - Free/open-source kiosk path is preferred over paid Fully Kiosk.
 - Android localhost fallback is documented for WebView file-access issues.
+- LG V30 pinned-mode layout is currently tuned with portrait media-query offsets.
+- The rendering loop keeps a one-second countdown but caches prayer schedules
+  and date/time formatters to reduce repeated work on the phone.
 
 ## Notes
 
@@ -41,4 +45,3 @@ Core behavior:
 - `config.local.js`: private local config, not tracked.
 - `lib/adhan.js`: vendored adhan-js browser bundle.
 - `audio/`: local athan files, not tracked.
-

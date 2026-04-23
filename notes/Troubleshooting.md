@@ -89,6 +89,23 @@ Fix in Webview Kiosk:
 - `Appearance -> Immersive Mode -> Always On`
 - `Appearance -> Window Insets -> None`
 
+## Pinned Mode Clips The Right Edge
+
+Meaning:
+
+Android screen pinning can change or crop the visible WebView area after the
+page has laid itself out. The unpinned view may look correct while pinned mode
+clips the right edge.
+
+Fix:
+
+- Use the latest CSS from the repo; it includes LG V30 pinned-mode offsets.
+- After pushing CSS changes, reopen with a bumped query string so Webview Kiosk
+  does not reuse cached assets.
+- If tuning again, check both portrait media-query blocks in `style.css`; the
+  compact `max-height: 760px` rule was the one that visibly affected pinned
+  mode on the V30.
+
 ## Countdown Or Times Look Wrong
 
 Check:

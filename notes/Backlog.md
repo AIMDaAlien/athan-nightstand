@@ -3,9 +3,10 @@
 ## Near-Term
 
 - Add a simple on-screen setup checklist for missing config/audio.
-- Add a screenshot to the README after V30 layout is confirmed.
-- Test Webview Kiosk file mode vs localhost mode on the actual V30.
 - Test athan autoplay with `Media playback requires user gesture` disabled.
+- Add a screenshot to the README using the accepted V30 pinned-mode layout.
+- Keep monitoring the pinned V30 layout after several hours, especially after
+  burn-in movement or layout swap.
 
 ## Later
 
@@ -18,6 +19,8 @@
 - Add a small health/status panel hidden behind a long press or query string.
 - Add documentation for auto-starting the Termux server after boot if localhost
   mode becomes the preferred setup.
+- Consider a named `v30Pinned` layout/profile instead of hard-coded media-query
+  tuning if other devices start using the app.
 
 ## Open Questions
 

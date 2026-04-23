@@ -58,6 +58,19 @@ Reason:
 - Webview Kiosk is free/open-source.
 - Webview Kiosk exposes the media gesture setting needed for unattended audio.
 
+## Treat Kiosk Browser As The Target Runtime
+
+Decision: describe the project as intended for a fullscreen Android kiosk
+browser or WebView shell, not plain Chrome.
+
+Reason:
+
+- Normal mobile browsers block or limit unattended audio playback.
+- Kiosk/WebView shells can keep the screen on, run fullscreen, launch on boot,
+  and expose media autoplay settings.
+- The LG V30 layout has device-specific pinned-mode tuning that only matters in
+  this runtime.
+
 ## Document Localhost Fallback
 
 Decision: document Termux localhost serving.
@@ -67,3 +80,14 @@ Reason:
 - Some Android WebView shells block `file:///sdcard/...` access.
 - `http://127.0.0.1:8080/index.html` avoids Android file-access restrictions.
 
+## Cache Tick-Loop Work
+
+Decision: keep the countdown ticking every second, but cache prayer schedules
+and `Intl.DateTimeFormat` instances.
+
+Reason:
+
+- The countdown must remain live.
+- Prayer schedules only need to be recalculated when the local date changes.
+- Formatter construction is unnecessary repeated work on an older phone.
+- Reducing per-second work lowers jank and battery/thermal load.

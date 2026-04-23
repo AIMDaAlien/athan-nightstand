@@ -96,6 +96,10 @@ Preferred free/open-source option:
 
 - Webview Kiosk from F-Droid.
 
+This project is intended to run in a kiosk browser or Android WebView shell.
+Plain Chrome is useful for previewing, but it is not the target runtime for a
+bedside device because unattended audio and fullscreen behavior are restricted.
+
 Important settings:
 
 - Fullscreen or immersive mode.
@@ -104,3 +108,11 @@ Important settings:
 - Launch on boot when ready.
 - Disable `Media playback requires user gesture`.
 
+## Current V30 Deployment Notes
+
+- The accepted phone URL is the localhost form:
+  `http://127.0.0.1:8080/index.html`.
+- Direct `file:///sdcard/athan/index.html` previously hit
+  `net::ERR_ACCESS_DENIED`.
+- The current CSS includes pinned-mode offsets for the LG V30. Re-test after any
+  layout or font-size changes before assuming the pinned view is still aligned.

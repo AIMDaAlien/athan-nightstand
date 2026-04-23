@@ -39,6 +39,14 @@ The public default calculation method is `NorthAmerica`.
 
 Sunrise is displayed but is not treated as an athan trigger.
 
+Prayer schedules are cached by local date. The one-second tick loop reuses the
+same `PrayerTimes` instance for today's schedule instead of rebuilding it every
+second, and keeps a small rolling cache for adjacent dates such as tomorrow's
+Fajr.
+
+Date and time formatting uses long-lived `Intl.DateTimeFormat` instances. The
+Gregorian/Hijri date text only re-renders when the local date key changes.
+
 ## Athan Trigger
 
 The app tracks the most recent passed prayer from:
@@ -70,3 +78,10 @@ The CSS uses a dark, low-brightness interface:
 
 This does not eliminate burn-in risk, but it reduces static high-brightness
 regions.
+
+## Device Layout Notes
+
+The LG V30 pinned-mode viewport behaves differently from the unpinned WebView.
+The accepted current layout uses extra right-side width reserve plus a small
+negative left offset in portrait media queries so prayer times do not clip when
+Android screen pinning is active.
